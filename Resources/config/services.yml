@@ -1,0 +1,33 @@
+parameters:
+    multiverse_components_matrix.form_type.matrix.class: Multiverse\Components\MatrixBundle\Form\Type\Matrix\MatrixType
+    multiverse_components_matrix.form_type.matrix_row.class: Multiverse\Components\MatrixBundle\Form\Type\Matrix\MatrixRowType
+services:
+    multiverse_components_matrix.form_type.matrix:
+        class: %multiverse_components_matrix.form_type.matrix.class%
+        calls:
+          - [setName, ['matrix']]
+          - [addColumn, ['name', null, {}]]
+          - [addColumn, ['value', 'date', {}]]
+          - [addColumn, ['specs', 'spec_list', {}]]
+        tags:
+          - { name: form.type, alias: matrix }
+
+    multiverse_components_matrix.form_type.matrix.specs:
+        class: %multiverse_components_matrix.form_type.matrix.class%
+        calls:
+          - [setName, ['spec_list']]
+          - [addColumn, ['name', null, {}]]
+          - [addColumn, ['value', null, {}]]
+        tags:
+          - { name: form.type, alias: spec_list }
+
+    multiverse_components_matrix.form_type.matrix_row:
+        class: %multiverse_components_matrix.form_type.matrix_row.class%
+        tags:
+          - { name: form.type, alias: matrix_row }
+
+
+    multiverse_components_matrix.twig.extension:
+        class: Multiverse\Components\MatrixBundle\Twig\MatrixTwigExtension
+        tags:
+            -  { name: 'twig.extension' }

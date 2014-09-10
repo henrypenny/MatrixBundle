@@ -1,0 +1,28 @@
+{
+    "name": "multiverse/components/matrix-bundle",
+    "type": "symfony-bundle",
+    "description": "Add matrix capability to symfony forms",
+    "homepage": "https://github.com/henrypenny/MultiverseComponentsMatrixBundle",
+    "keywords": ["array", "cms", "admin", "matrix"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Multiverse",
+            "email": "henrypenny@hotmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3",
+        "symfony/symfony": "~2.3"
+    },
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-0": { "Multiverse\\Components\\MatrixBundle": "" }
+    },
+    "target-dir": "Multiverse/Components/MatrixBundle",
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.0.1-dev"
+        }
+    }
+}

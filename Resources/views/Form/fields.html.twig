@@ -1,0 +1,19 @@
+{% block matrix_widget -%}
+    <table>
+    {% for row in form.children %}
+        <tr>
+        {% for val in row.children %}
+            {{- matrix_widget_tuple(form, { val : val}) -}}
+        {% endfor %}
+        </tr>
+    {% endfor %}
+    </table>
+
+{%- endblock matrix_widget %}
+{# Cant use matrix_row as it will conflict with the Forms api #}
+{% block matrix_tuple -%}
+    <td>
+        {{ form_widget(val) }}
+    </td>
+{%- endblock matrix_tuple %}s
+

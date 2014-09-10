@@ -1,0 +1,3 @@
+multiverse_components_matrix_homepage:
+    path:     /matrix/
+    defaults: { _controller: MultiverseComponentsMatrixBundle:Default:index }
