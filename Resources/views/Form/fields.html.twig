@@ -1,19 +1,93 @@
 {% block matrix_widget -%}
-    <table>
-    {% for row in form.children %}
-        <tr>
-        {% for val in row.children %}
-            {{- matrix_widget_tuple(form, { val : val}) -}}
-        {% endfor %}
+    {% set sortableId = 'key_value_sortable_' ~ id %}
+    {#{{ mv_debug(form) }}#}
+    <table class="well" {{ block('widget_attributes') }} style="width: 364px;" data-prototype="{{ form_widget(form.vars.prototype)|e  }}">
+
+        <thead>
+        <tr width="100%">
+            <th></th>
+            {% for colName, colval in form.vars.columns %}
+                <th width="45%">{{ colName }}</th>
+            {% endfor %}
+            <th></th>
         </tr>
-    {% endfor %}
+        </thead>
+
+        <tbody class="ui-sortable" id="{{ sortableId }}">
+        {% for row in form.children %}
+
+            {{ form_row(row) }}
+
+        {% endfor %}
+        </tbody>
+
+        <tfoot>
+        <tr>
+            <td></td>
+            <td colspan="3"><button class="btn btn-mini keyValueAdd">+</button></td>
+        </tr>
+        </tfoot>
+
+
+        <script>
+            jQuery(document).ready(function() {
+
+                var $rows = $( "#{{ sortableId }}"),
+
+                resetTabIndex = function() {
+                    var index = 1;
+                    $rows.find('input').each(function() {
+                        $(this).attr('tabindex', index++);
+                    });
+                    $('.keyValueAdd').attr('tabindex', index++);
+                };
+
+                resetTabIndex();
+
+                $rows.sortable({
+                    stop: function( event, ui ) {
+                        resetTabIndex();
+                    }
+                });
+
+                $rows.disableSelection();
+
+                $('body').on('click', '.keyValueAdd', function(e) {
+                    e.preventDefault();
+                    var $this = $(this),
+                            $table = $this.closest('table'),
+                            prototype = $table.data('prototype');
+
+                    prototype = prototype.split('__name__').join($table.find('tbody tr').length);
+                    $this.closest('table').find('tbody').append(prototype);
+                    resetTabIndex();
+                });
+                $('body').on('click', '.keyValueDelete', function(e) {
+                    e.preventDefault();
+                    $(this).closest('tr').remove();
+                    resetTabIndex();
+                });
+            });
+        </script>
+
     </table>
 
 {%- endblock matrix_widget %}
 {# Cant use matrix_row as it will conflict with the Forms api #}
-{% block matrix_tuple -%}
-    <td>
-        {{ form_widget(val) }}
-    </td>
-{%- endblock matrix_tuple %}s
 
+{% block matrix_row_row %}
+    {{ form_widget(form) }}
+{% endblock %}
+
+
+{% block matrix_row_widget %}
+<tr>
+    <td><i class="icon-move keyValueMove ui-sortable-handle"></i></td>
+    {% for val in form.children %}
+        <td>
+            {{- form_widget(val) -}}
+        </td>
+    {% endfor %}
+    <td><button class="btn btn-danger btn-mini keyValueDelete"><i class="icon-trash"></i></button></td>
+</tr>
+{% endblock matrix_row_widget %}

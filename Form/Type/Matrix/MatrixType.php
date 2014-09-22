@@ -13,6 +13,8 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
@@ -47,17 +49,31 @@ class MatrixType extends CollectionType {
 
             $output = array();
 
-            foreach ($input as $value) {
-                $outputRow = array();
-                foreach($value as $colName => $col) {
-                    $outputRow[$colName] = $value[$colName];
+            if(is_array($input)) {
+                foreach ($input as $value) {
+                    if(is_array($value)) {
+                        $outputRow = array();
+
+                        foreach($value as $colName => $col) {
+                            $outputRow[$colName] = $value[$colName];
+                        }
+                        $output[] = $outputRow;
+                    }
                 }
-                $output[] = $outputRow;
             }
 
             $e->setData($output);
         }, 1);
+
+
     }
+
+    public function buildView(FormView $view, FormInterface $form, array $options) {
+        if(isset($options['columns'])) {
+            $view->vars = array_merge($view->vars, array('columns' => $options['columns']));
+        }
+    }
+
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
@@ -68,6 +84,7 @@ class MatrixType extends CollectionType {
             'allow_delete' => true,
             'allowed_keys' => null,
             'use_container_object' => false,
+            'columns' => $this->cols,
             'options' => array('columns' => $this->cols)
         ));
     }
@@ -79,6 +96,6 @@ class MatrixType extends CollectionType {
 
     public function getName()
     {
-        return $this->_name;
+        return 'matrix';
     }
 } 
