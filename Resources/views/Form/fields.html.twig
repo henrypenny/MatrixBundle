@@ -39,7 +39,7 @@
                     $rows.find('input').each(function() {
                         $(this).attr('tabindex', index++);
                     });
-                    $('.keyValueAdd').attr('tabindex', index++);
+                    $('#{{ id }} .keyValueAdd').attr('tabindex', index++);
                 };
 
                 resetTabIndex();
@@ -52,7 +52,7 @@
 
                 $rows.disableSelection();
 
-                $('body').on('click', '.keyValueAdd', function(e) {
+                $('body').on('click', '#{{ id }} .keyValueAdd', function(e) {
                     e.preventDefault();
                     var $this = $(this),
                             $table = $this.closest('table'),
@@ -62,9 +62,12 @@
                     $this.closest('table').find('tbody').append(prototype);
                     resetTabIndex();
                 });
-                $('body').on('click', '.keyValueDelete', function(e) {
+                $('body').on('click', '#{{ id }} .keyValueDelete', function(e) {
                     e.preventDefault();
-                    $(this).closest('tr').remove();
+                    var $tr = $(this).closest('tr');
+                    $tr.hide(200, function() {
+                        $tr.remove();
+                    });
                     resetTabIndex();
                 });
             });
@@ -88,6 +91,6 @@
             {{- form_widget(val) -}}
         </td>
     {% endfor %}
-    <td><button class="btn btn-danger btn-mini keyValueDelete"><i class="icon-trash"></i></button></td>
+    <td><button class="btn btn-danger btn-mini"><i class="icon-trash keyValueDelete"></i></td>
 </tr>
 {% endblock matrix_row_widget %}

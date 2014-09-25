@@ -11,13 +11,25 @@ namespace Multiverse\Components\MatrixBundle\Form\Type\Matrix;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class MatrixRowType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        foreach($options['columns'] as $name => $column) {
+        if(is_array($options['columns'])) {
+            $columns = $options['columns'];
+        }
+        else if(is_object($options['columns']) && ($options['columns'] instanceof \Closure)) {
+            $columns = $options['columns']();
+        }
+        else {
+            $columns = array();
+        }
+
+        foreach($columns as $name => $column) {
             $builder->add($column['name'], $column['type'], $column['options']);
         }
     }

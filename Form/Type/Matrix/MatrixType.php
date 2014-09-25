@@ -23,6 +23,10 @@ class MatrixType extends CollectionType {
     protected $cols = array();
     protected $_name = '';
 
+    public function __construct(array $cols = array()) {
+        $this->cols = $cols;
+    }
+
     public function setName($name) {
         $this->_name = $name;
     }
@@ -70,32 +74,36 @@ class MatrixType extends CollectionType {
 
     public function buildView(FormView $view, FormInterface $form, array $options) {
         if(isset($options['columns'])) {
-            $view->vars = array_merge($view->vars, array('columns' => $options['columns']));
+            $view->vars = array_merge($view->vars, array('columns' => $this->cols));
         }
     }
-
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
             'type' => 'matrix_row',
-            'value_type' => 'matrix_row',
             'allow_add' => true,
             'allow_delete' => true,
             'allowed_keys' => null,
             'use_container_object' => false,
-            'columns' => $this->cols,
-            'options' => array('columns' => $this->cols)
+            'columns' => function() {
+                return $this->cols;
+            },
+            'options' => array('columns' => function() {
+                return $this->cols;
+            })
         ));
+
+        $resolver->setRequired(array('columns'));
     }
 
     public function getParent()
     {
-        return 'collection';
+        return 'matrix';
     }
 
     public function getName()
     {
-        return 'matrix';
+        return $this->_name;
     }
 } 

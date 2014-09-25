@@ -1,4 +1,5 @@
 parameters:
+    multiverse_components_matrix.form_type.base_matrix.class: Multiverse\Components\MatrixBundle\Form\Type\Matrix\BaseMatrixType
     multiverse_components_matrix.form_type.matrix.class: Multiverse\Components\MatrixBundle\Form\Type\Matrix\MatrixType
     multiverse_components_matrix.form_type.matrix_row.class: Multiverse\Components\MatrixBundle\Form\Type\Matrix\MatrixRowType
 services:
@@ -12,6 +13,11 @@ services:
 #          - [addColumn, ['value', null, {}]]
 #        tags:
 #          - { name: form.type, alias: name_value }
+
+    multiverse_components_matrix.form_type.matrix:
+        class: %multiverse_components_matrix.form_type.base_matrix.class%
+        tags:
+          - { name: form.type, alias: matrix }
 
     multiverse_components_matrix.form_type.matrix_row:
         class: %multiverse_components_matrix.form_type.matrix_row.class%
