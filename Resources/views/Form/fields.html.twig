@@ -36,7 +36,7 @@
 
                 resetTabIndex = function() {
                     var index = 1;
-                    $rows.find('input').each(function() {
+                    $rows.find('input.rowData').each(function() {
                         $(this).attr('tabindex', index++);
                     });
                     $('#{{ id }} .keyValueAdd').attr('tabindex', index++);
@@ -47,6 +47,14 @@
                 $rows.sortable({
                     stop: function( event, ui ) {
                         resetTabIndex();
+
+                        var $this = $(this),
+                                order = 0;
+                        $this.find('.rowOrder').each(function() {
+                            $(this).val(order);
+                            order++;
+                        });
+
                     }
                 });
 
@@ -86,8 +94,9 @@
 {% block matrix_row_widget %}
 <tr>
     <td><i class="icon-move keyValueMove ui-sortable-handle"></i></td>
+        <input class="rowOrder" type="hidden" name="{{ full_name }}[__rowOrder]" value="{{ name }}">
     {% for val in form.children %}
-        <td>
+        <td class="rowData">
             {{- form_widget(val) -}}
         </td>
     {% endfor %}

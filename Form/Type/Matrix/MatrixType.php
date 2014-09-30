@@ -69,7 +69,18 @@ class MatrixType extends CollectionType {
             $e->setData($output);
         }, 1);
 
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
 
+            $data = $event->getData();
+            $_data = array();
+
+            foreach($data as $datum) {
+                $_data[$datum['__rowOrder']] = $datum;
+                unset($_data[$datum['__rowOrder']]['__rowOrder']);
+            }
+
+            $event->setData($_data);
+        });
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options) {
