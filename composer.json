@@ -15,14 +15,14 @@
         "php": ">=5.3.3",
         "symfony/symfony": "~2.3"
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "autoload": {
         "psr-0": { "Multiverse\\Components\\MatrixBundle": "" }
     },
     "target-dir": "Multiverse/Components/MatrixBundle",
     "extra": {
         "branch-alias": {
-            "dev-master": "master-dev"
+            "dev-master": "master"
         }
     }
 }
