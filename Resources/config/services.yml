@@ -2,20 +2,32 @@ parameters:
     multiverse_components_matrix.form_type.base_matrix.class: Multiverse\Components\MatrixBundle\Form\Type\Matrix\BaseMatrixType
     multiverse_components_matrix.form_type.matrix.class: Multiverse\Components\MatrixBundle\Form\Type\Matrix\MatrixType
     multiverse_components_matrix.form_type.matrix_row.class: Multiverse\Components\MatrixBundle\Form\Type\Matrix\MatrixRowType
+    multiverse_components_matrix.entity_to_json_transformer.class: Multiverse\Components\MatrixBundle\Form\DataTransformer\EntityToJsonTransformer
+    multiverse_components_matrix.model_transformer.class: Multiverse\Components\MatrixBundle\Form\DataTransformer\ModelTransformer
+    multiverse_components_matrix.view_transformer.class: Multiverse\Components\MatrixBundle\Form\DataTransformer\ViewTransformer
+
 services:
 
-# Example matrix config
-#    multiverse_components_matrix.form_type.matrix.name_value:
-#        class: Multiverse\Components\MatrixBundle\Form\Type\Matrix\MatrixType
-#        calls:
-#          - [setName, ['name_value']]
-#          - [addColumn, ['name', null, {}]]
-#          - [addColumn, ['value', null, {}]]
-#        tags:
-#          - { name: form.type, alias: name_value }
+    multiverse_components_matrix.entity_to_json_transformer:
+        class: %multiverse_components_matrix.entity_to_json_transformer.class%
+        arguments:
+          em: "@doctrine.orm.entity_manager"
+
+    multiverse_components_matrix.model_transformer:
+        class: %multiverse_components_matrix.model_transformer.class%
+        arguments:
+          em: "@doctrine.orm.entity_manager"
+
+    multiverse_components_matrix.view_transformer:
+        class: %multiverse_components_matrix.view_transformer.class%
+        arguments:
+          em: "@doctrine.orm.entity_manager"
 
     multiverse_components_matrix.form_type.matrix:
         class: %multiverse_components_matrix.form_type.base_matrix.class%
+        arguments:
+          modelTransformer: "@multiverse_components_matrix.model_transformer"
+          viewTransformer: "@multiverse_components_matrix.view_transformer"
         tags:
           - { name: form.type, alias: matrix }
 
@@ -24,8 +36,9 @@ services:
         tags:
           - { name: form.type, alias: matrix_row }
 
-
     multiverse_components_matrix.twig.extension:
         class: Multiverse\Components\MatrixBundle\Twig\MatrixTwigExtension
+        arguments:
+          em: "@doctrine.orm.entity_manager"
         tags:
             -  { name: 'twig.extension' }

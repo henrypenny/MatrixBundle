@@ -1,32 +1,32 @@
+{% block matrix_row %}
+    <div class="pagepart pagepart_sky">
+        {{ form_label(form) }}
+        {{ form_widget(form) }}
+    </div>
+{% endblock %}
+
+{% block matrix_label %}
+    <div class="prop_bar_sky">{{ name | humanize }}</div>
+{% endblock %}
+
 {% block matrix_widget -%}
     {% set sortableId = 'key_value_sortable_' ~ id %}
     {#{{ mv_debug(form) }}#}
-    <table class="well" {{ block('widget_attributes') }} style="width: 364px;" data-prototype="{{ form_widget(form.vars.prototype)|e  }}">
-
-        <thead>
-        <tr width="100%">
-            <th></th>
-            {% for colName, colval in form.vars.columns %}
-                <th width="45%">{{ colName }}</th>
-            {% endfor %}
-            <th></th>
-        </tr>
-        </thead>
-
-        <tbody class="ui-sortable" id="{{ sortableId }}">
+    <div class="block clearfix matrixWidget" {{ block('widget_attributes') }} data-prototype="{{ form_widget(form.vars.prototype)|e  }}">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="ui-sortable matrixRows" id="{{ sortableId }}">
         {% for row in form.children %}
-
             {{ form_row(row) }}
-
         {% endfor %}
-        </tbody>
+                </div>
+            </div>
+        </div>
 
-        <tfoot>
-        <tr>
-            <td></td>
-            <td colspan="3"><button class="btn btn-mini keyValueAdd">+</button></td>
-        </tr>
-        </tfoot>
+        <div class="row">
+            <div class="col-xs-1"></div>
+            <div class="col-xs-11"><button class="btn btn-mini keyValueAdd">+</button></div>
+        </div>
 
 
         <script>
@@ -63,16 +63,16 @@
                 $('body').on('click', '#{{ id }} .keyValueAdd', function(e) {
                     e.preventDefault();
                     var $this = $(this),
-                            $table = $this.closest('table'),
-                            prototype = $table.data('prototype');
+                            $matrixWidget = $this.closest('.matrixWidget'),
+                            prototype = $matrixWidget.data('prototype');
 
-                    prototype = prototype.split('__name__').join($table.find('tbody tr').length);
-                    $this.closest('table').find('tbody').append(prototype);
+                    prototype = prototype.split('__name__').join($matrixWidget.find('.matrixRow').length);
+                    $this.closest('.matrixWidget').find('.matrixRows').append(prototype);
                     resetTabIndex();
                 });
                 $('body').on('click', '#{{ id }} .keyValueDelete', function(e) {
                     e.preventDefault();
-                    var $tr = $(this).closest('tr');
+                    var $tr = $(this).closest('.matrixRow');
                     $tr.hide(200, function() {
                         $tr.remove();
                     });
@@ -80,8 +80,7 @@
                 });
             });
         </script>
-
-    </table>
+    </div>
 
 {%- endblock matrix_widget %}
 {# Cant use matrix_row as it will conflict with the Forms api #}
@@ -92,14 +91,17 @@
 
 
 {% block matrix_row_widget %}
-<tr>
-    <td><i class="icon-move keyValueMove ui-sortable-handle"></i></td>
+<div class="row matrixRow">
+    <div class="col-xs-1"><i class="icon-move keyValueMove ui-sortable-handle"></i></div>
+    <div class="col-xs-10 rowData">
         <input class="rowOrder" type="hidden" name="{{ full_name }}[__rowOrder]" value="{{ name }}">
     {% for val in form.children %}
-        <td class="rowData">
-            {{- form_widget(val) -}}
-        </td>
+        <div class="row">
+            <div class="col-xs-4">{{ val.vars.form.vars.name | humanize }}</div>
+            <div class="col-xs-8">{{- form_widget(val) -}}</div>
+        </div>
     {% endfor %}
-    <td><button class="btn btn-danger btn-mini"><i class="icon-trash keyValueDelete"></i></td>
-</tr>
+    </div>
+    <div class="col-xs-1"><button class="btn btn-danger btn-mini"><i class="icon-trash keyValueDelete"></i></div>
+</div>
 {% endblock matrix_row_widget %}

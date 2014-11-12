@@ -9,12 +9,28 @@
 namespace Multiverse\Components\MatrixBundle\Twig;
 
 
+use Doctrine\Common\Persistence\ObjectManager;
+
 class MatrixTwigExtension extends \Twig_Extension {
 
+    /**
+     * @var ObjectManager
+     */
+    private $om;
+
+    /**
+     * @param ObjectManager $om
+     */
+    public function __construct(ObjectManager $om)
+    {
+        $this->om = $om;
+    }
+
     public function getFunctions() {
-        return array(
-            new \Twig_SimpleFunction('matrix_widget_tuple', null, array('node_class' => 'Symfony\Bridge\Twig\Node\SearchAndRenderBlockNode', 'is_safe' => array('html'))),
-        );
+
+        $functions = array();
+        $functions['resolve_object'] = new \Twig_SimpleFunction('resolve_object', array($this, 'resolveObject'));
+        return $functions;
     }
 
     /**
@@ -25,5 +41,11 @@ class MatrixTwigExtension extends \Twig_Extension {
     public function getName()
     {
         return 'matrix_extension';
+    }
+
+    public function resolveObject($entityAry) {
+        $repo = $this->om->getRepository($entityAry['__matrix__class__']);
+        $object = $repo->find($entityAry['id']);
+        return $object;
     }
 }

@@ -31,6 +31,11 @@ class MatrixRowType extends AbstractType
 
         foreach($columns as $name => $column) {
             $builder->add($column['name'], $column['type'], $column['options']);
+            if(isset($column['transformers'])) {
+                foreach($column['transformers'] as $transformer) {
+                    $builder->addModelTransformer($transformer);
+                }
+            }
         }
     }
 

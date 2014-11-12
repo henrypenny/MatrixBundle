@@ -8,6 +8,7 @@
 
 namespace Multiverse\Components\MatrixBundle\Form\Type\Matrix;
 
+use Multiverse\Components\MatrixBundle\Form\DataTransformer\TestTransformer;
 use Symfony\Component\Form\Extension\Core\ChoiceList\SimpleChoiceList;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -31,12 +32,13 @@ class MatrixType extends CollectionType {
         $this->_name = $name;
     }
 
-    public function addColumn($name, $type = null, array $options = array()) {
+    public function addColumn($name, $type = null, array $options = array(), array $transformers = array()) {
 
         $col = array(
             'name' => $name,
             'type' => $type,
-            'options' => $options
+            'options' => $options,
+            'transformers' => $transformers
         );
 
         $this->cols[$name] = $col;
@@ -44,30 +46,30 @@ class MatrixType extends CollectionType {
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $e) {
-            $input = $e->getData();
-
-            if (null === $input) {
-                $input = array();
-            }
-
-            $output = array();
-
-            if(is_array($input)) {
-                foreach ($input as $value) {
-                    if(is_array($value)) {
-                        $outputRow = array();
-
-                        foreach($value as $colName => $col) {
-                            $outputRow[$colName] = $value[$colName];
-                        }
-                        $output[] = $outputRow;
-                    }
-                }
-            }
-
-            $e->setData($output);
-        }, 1);
+//        $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $e) {
+//            $input = $e->getData();
+//
+//            if (null === $input) {
+//                $input = array();
+//            }
+//
+//            $output = array();
+//
+//            if(is_array($input)) {
+//                foreach ($input as $value) {
+//                    if(is_array($value)) {
+//                        $outputRow = array();
+//
+//                        foreach($value as $colName => $col) {
+//                            $outputRow[$colName] = $value[$colName];
+//                        }
+//                        $output[] = $outputRow;
+//                    }
+//                }
+//            }
+//
+//            $e->setData($output);
+//        }, 1);
 
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
 
@@ -81,6 +83,13 @@ class MatrixType extends CollectionType {
 
             $event->setData($_data);
         });
+
+        foreach($options['matrix_model_transformers'] as $transformer) {
+            $builder->addModelTransformer($transformer);
+        }
+        foreach($options['matrix_view_transformers'] as $transformer) {
+            $builder->addViewTransformer($transformer);
+        }
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options) {
