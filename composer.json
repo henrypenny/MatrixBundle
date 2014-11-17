@@ -22,7 +22,7 @@
     "target-dir": "Multiverse/Components/MatrixBundle",
     "extra": {
         "branch-alias": {
-            "dev-master": "0.0.2-dev"
+            "dev-master": "0.0.3-dev"
         }
     }
 }
