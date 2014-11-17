@@ -44,6 +44,9 @@ class MatrixTwigExtension extends \Twig_Extension {
     }
 
     public function resolveObject($entityAry) {
+        if($entityAry == null || !isset($entityAry['__matrix__class__']) || $entityAry['__matrix__class__'] == null || $entityAry['__matrix__class__'] == '') {
+            return null;
+        }
         $repo = $this->om->getRepository($entityAry['__matrix__class__']);
         $object = $repo->find($entityAry['id']);
         return $object;
